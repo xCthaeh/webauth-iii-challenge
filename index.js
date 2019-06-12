@@ -25,6 +25,23 @@ function generateToken(user) {
   return jwt.sign(payload, secret, options);
 }
 
+server.post("/api/login", (req, res) => {
+  const creds = req.body;
+
+  db("users")
+    .where({ username: creds.username })
+    .first()
+    .then(user => {
+      if (user && bcrypt.compareSync(creds.password, user.password)) {
+        const token = generateToken(user);
+        res.status(200).json({ message: "Login successful! Welcome!", token });
+      } else {
+        res.status(401).json({ message: "You shall not pass!" });
+      }
+    })
+    .catch(err => res.json(err));
+});
+
 server.listen(port, function() {
   console.log(`\n=== API Listening on http://localhost:${port} ===\n`);
 });
