@@ -42,6 +42,18 @@ server.post("/api/login", (req, res) => {
     .catch(err => res.json(err));
 });
 
+server.post("/api/register", (req, res) => {
+  const creds = req.body;
+  const hash = bcrypt.hashSync(creds.password, 4);
+  creds.password = hash;
+  db("users")
+    .insert(creds)
+    .then(ids => {
+      res.status(201).json(ids);
+    })
+    .catch(err => json(err));
+});
+
 function protected(req, res, next) {
   const token = req.headers.authorization;
 
@@ -73,7 +85,9 @@ function checkRole(role) {
     if (req.decodedToken && req.decodedToken.roles.includes(role)) {
       next();
     } else {
-      res.status(403).json({ message: "Your role does not have access to this." });
+      res
+        .status(403)
+        .json({ message: "Your role does not have access to this." });
     }
   };
 }
