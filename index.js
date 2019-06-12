@@ -68,6 +68,16 @@ server.get("/api/users", protected, checkRole("sales"), (req, res) => {
     .catch(err => res.send(err));
 });
 
+function checkRole(role) {
+  return function(req, res, next) {
+    if (req.decodedToken && req.decodedToken.roles.includes(role)) {
+      next();
+    } else {
+      res.status(403).json({ message: "Your role does not have access to this." });
+    }
+  };
+}
+
 server.listen(port, function() {
   console.log(`\n=== API Listening on http://localhost:${port} ===\n`);
 });
