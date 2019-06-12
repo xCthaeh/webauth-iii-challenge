@@ -10,6 +10,21 @@ const server = express();
 server.use(express.json());
 server.use(cors());
 
+function generateToken(user) {
+  const payload = {
+    subject: user.id,
+    username: user.username,
+    roles: ["sales", "marketing"]
+  };
+
+  const secret = process.env.JWT_SECRET;
+  const options = {
+    expiresIn: "24h"
+  };
+
+  return jwt.sign(payload, secret, options);
+}
+
 server.listen(port, function() {
   console.log(`\n=== API Listening on http://localhost:${port} ===\n`);
 });
