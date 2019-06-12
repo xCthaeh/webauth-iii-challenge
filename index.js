@@ -42,6 +42,32 @@ server.post("/api/login", (req, res) => {
     .catch(err => res.json(err));
 });
 
+function protected(req, res, next) {
+  const token = req.headers.authorization;
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+      if (err) {
+        res.status(401).json({ message: "Token was invalid" });
+      } else {
+        req.decodedToken = decodedToken;
+        next();
+      }
+    });
+  } else {
+    res.status(401).json({ message: "Token not distributed" });
+  }
+}
+
+server.get("/api/users", protected, checkRole("sales"), (req, res) => {
+  db("users")
+    .select("id", "username", "password")
+    .then(users => {
+      res.json(users);
+    })
+    .catch(err => res.send(err));
+});
+
 server.listen(port, function() {
   console.log(`\n=== API Listening on http://localhost:${port} ===\n`);
 });
