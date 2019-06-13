@@ -44,9 +44,9 @@ export default class Login extends Component {
 
   render() {
     return (
-      <div>
+      <div className= "loginContainer">
         <form onSubmit={this.submitHandler}>
-          <label htmlFor="username">Username</label>
+          <label className="userName" htmlFor="username">Username</label>
           <input
             type="text"
             id="username"
@@ -54,7 +54,7 @@ export default class Login extends Component {
             value={this.state.user.username}
             onChange={this.inputHandler}
           />
-          <label htmlFor="password">Password</label>
+          <label className="pw" htmlFor="password">Password</label>
           <input
             type="text"
             id="password"
